@@ -1,5 +1,5 @@
-import { cartModel } from "../models/cart_mongo.model.js";
-export default class CartManagerMongo {
+import { cartModel } from "./models/cart.model.js";
+export default class cartManager {
 
 // METODO PARA LISTAR TODOS LOS CARROS
   getCarts = async () => {

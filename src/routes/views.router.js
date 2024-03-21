@@ -1,10 +1,10 @@
 import {Router} from 'express';
-import { ProductManager } from '../dao/managers_file_system/ProductManager.js';
-import { productModel } from '../dao/models/product_mongo.model.js';
+import { productModel } from '../dao/models/product.model.js';
+import productManager from '../dao/productManager.js';
+import cartManager from '../dao/cartManager.js';
 const router = Router();
-const manager = new ProductManager();
-import CartManagerMongo from "../dao/manager_mongo_atlas/CartManagerMongo.js";
-const carts = new CartManagerMongo();
+const manager = new productManager();
+const carts = new cartManager();
 
 router.get('/carts/:cid', async (req, res) => {
     try {

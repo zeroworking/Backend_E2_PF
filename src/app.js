@@ -1,17 +1,12 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import handlebars from 'express-handlebars';
 import __dirname from './utils.js';
-import { Server } from 'socket.io'
+import { Server } from 'socket.io';
+import viewRoutes from './routes/views.router.js';
 import productsRoutes from './routes/products.router.js';
 import cartsRoutes from './routes/carts.router.js';
-import viewRoutes from './routes/views.router.js';
-import products_mongoRouter from './routes/products_mongo.router.js';
-import carts_mongoRouter from './routes/carts_mongo.router.js';
-import mongoose from 'mongoose';
-import { chatModel } from './dao/models/chat_mongo.model.js';
-import { ProductManager } from './dao/managers_file_system/ProductManager.js';
-
-const manager = new ProductManager();
+import { chatModel } from './dao/models/chat.model.js';
 
 const app = express();
 const PORT = 8080;
@@ -29,10 +24,6 @@ app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + "/public"))
 
 // RUTAS MONGO
-app.use('/api/products_mongo',products_mongoRouter)
-app.use('/api/carts_mongo',carts_mongoRouter)
-
-// RUTAS FILESYSTEM
 app.use('/api/products',productsRoutes)
 app.use('/api/carts',cartsRoutes)
 
@@ -78,20 +69,7 @@ socketServer.on("connection", async (socket) => {
         }
     });
 
-         // WEBSOCKET DELETE PRODUCT
-         socket.on('msgDeleteProduct', async data => {
-            await manager.deleteProduct(data); 
-            const updatedProducts = await manager.getProduct();
-            socketServer.emit('products', updatedProducts); 
-         })
-    
-        // WEBSOCKET ADD PRODUCT
-        socket.on('msgAddProduct', async (data) => {
-            const { title, description, code, price, status = true , stock, category, thumbnails } = data;    
-            await manager.addProduct({ title, description, code, price, status, stock, category, thumbnails });
-            const updatedProducts = await manager.getProduct();
-            socketServer.emit('products', updatedProducts); 
-        });
+        
 
 });
 

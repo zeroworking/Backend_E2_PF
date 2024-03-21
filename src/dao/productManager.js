@@ -1,7 +1,7 @@
-import { productModel } from "../models/product_mongo.model.js";
-export default class ProductManagerMongo {
+import { productModel } from "./models/product.model.js";
+export default class productManager {
 
-    async getAll(queryOptions) {
+    async getAllProducts(queryOptions) {
         const { limit, page, category, sort } = queryOptions;    
         
         const searchQuery = {};
@@ -29,11 +29,6 @@ export default class ProductManagerMongo {
     
         return products;
     };
- 
-    async getById(id) {
-        let product = await productModel.findById(id).lean();        
-        return product
-    };
 
     async saveProduct(product) {
         try {
@@ -46,13 +41,21 @@ export default class ProductManagerMongo {
         }
     };
 
-    async updateProduct(id, product) {
+    async updateProductById(id, product) {
         const result = await productModel.updateOne({ _id: id }, product);
         return result
     };
 
-    async deleteProduct(id) {
+    async getProductById(id) {
+        const product = await productModel.findById(id);
+        return product;
+    };
+    
+    async deleteProductById(id) {
         const result = await productModel.findByIdAndDelete(id)
         return result
     };
+
 }
+
+
