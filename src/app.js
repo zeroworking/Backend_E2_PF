@@ -69,8 +69,6 @@ socketServer.on("connection", async (socket) => {
         }
     });
 
-        
-
 });
 
 const URL_MONGO = 'mongodb+srv://ZeroWorking:wxYoVrR9Tcj89zIt@zeroworking.ihft1zn.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=ZeroWorking'

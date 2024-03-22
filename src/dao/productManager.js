@@ -41,18 +41,18 @@ export default class productManager {
         }
     };
 
-    async updateProductById(id, product) {
-        const result = await productModel.updateOne({ _id: id }, product);
+    async updateProductById(pid, product) {
+        const result = await productModel.updateOne({ _id: pid }, product);
         return result
     };
 
-    async getProductById(id) {
-        const product = await productModel.findById(id);
+    async getProductById(pid) {
+        const product = await productModel.findById(pid);
         return product;
     };
     
-    async deleteProductById(id) {
-        const result = await productModel.findByIdAndDelete(id)
+    async deleteProductById(pid) {
+        const result = await productModel.findByIdAndDelete(pid)
         return result
     };
 

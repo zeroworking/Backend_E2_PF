@@ -1,61 +1,24 @@
-const socket = io();
+async function AgregarProductoACarro(productID) {
+  const cartID = "65fccb77ac17ebba4a2b45a0"; // ID del carrito
 
-socket.on('products', (products) => {
-  const productListContainer = document.getElementById('contenedordeproductos');
-  productListContainer.innerHTML = '';
-  products.forEach((product) => {
-    const productDiv = document.createElement('div');
-    productDiv.classList.add('producto');
-    productDiv.innerHTML = `
-      <div>        
-        <button class="btn btn-danger" onclick="eliminarProductoDom('${product.id}')">Eliminar</button>
-        Id: ${product.id}
-        Título: ${product.title}
-        Descripción: ${product.description}
-        Código: ${product.code}
-        Precio: ${product.price}        
-        Stock: ${product.stock}
-        Categoría: ${product.category}
-        Imágenes: ${product.thumbnails}  
-        Estado: ${product.status}    
-      </div>`;
-    
-    productDiv.innerHTML += '<br>';
-    productListContainer.appendChild(productDiv);
-        
-  });
-});
+  const newProduct = { product: productID, quantity: 1 };
+  try {
+    const response = await fetch(`/api/carts/${cartID}/product/${productID}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newProduct)
+    });
 
-function eliminarProductoDom(id) {      
-    socket.emit('msgDeleteProduct', id);
+    if (!response.ok) {
+      throw new Error("Error al agregar el producto al carrito");
+    }
+    const cart = await response.json();    
+    swal("¡Producto agregado!", `El producto ha sido agregado al carrito ${cartID}`, "success");
+    console.log("Producto agregado al carrito:", cart);
+  } catch (error) {    
+    swal("¡Error!", "Ocurrió un error al agregar el producto al carrito.", "error");
+    console.error("Error:", error);
+  }
 }
-
-function sendData(data) {  
-  socket.emit('msgAddProduct', data) 
-}
-
-document.getElementById('productForm').addEventListener('submit', function(event) {
-  event.preventDefault();  
-  const title = document.getElementById('title').value;
-  const description = document.getElementById('description').value;
-  const code = document.getElementById('code').value;
-  const price = document.getElementById('price').value;
-  const status = document.getElementById('status').value;
-  const stock = document.getElementById('stock').value;
-  const category = document.getElementById('category').value;
-  const thumbnails = document.getElementById('thumbnails').value;
-
-  const productData = {
-    title: title,
-    description: description,
-    code: code,
-    price: price,
-    status: status,
-    stock: stock,
-    category: category,
-    thumbnails: thumbnails
-  };
-
-  sendData(productData);  
-  this.reset();
-});

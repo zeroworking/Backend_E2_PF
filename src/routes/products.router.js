@@ -1,6 +1,6 @@
 import { Router } from "express";
-import productManager from "../dao/productManager.js";
 const router = Router();
+import productManager from "../dao/productManager.js";
 const products = new productManager();
  
 // RUTA PARA LISTAR LOS PRODUCTOS CON FILTRO POR CATEGORIA, LIMIT, PAGE, SORT
@@ -15,8 +15,8 @@ router.get("/", async (req, res) => {
       queryOptions.sort = sort === 'asc' ? { price: 1 } : { price: -1 };
     }
     const result = await products.getAllProducts(queryOptions);
-    result.prevLink = result.hasPrevPage ? `http://localhost:8080/api/products_mongo?page=${result.prevPage}` : '';
-    result.nextLink = result.hasNextPage ? `http://localhost:8080/api/products_mongo?page=${result.nextPage}` : '';
+    result.prevLink = result.hasPrevPage ? `http://localhost:8080/?page=${result.prevPage}` : '';
+    result.nextLink = result.hasNextPage ? `http://localhost:8080/?page=${result.nextPage}` : '';
     result.isValid = !(page < 1 || page > result.totalPages)
        
     res.json({
@@ -31,13 +31,13 @@ router.get("/", async (req, res) => {
 
 // RUTA PARA LISTAR UN PRODUCTO POR SU ID
 router.get("/:id", async (req, res) => {
-    const { id } = req.params;
+    const pid = req.params.id; 
     try {
-        const product = await products.getProductById(id);
+        const product = await products.getProductById(pid);     
         if (!product) {
             return res.status(404).send({ status: "error", message: "El producto no fue encontrado." });
         }
-        res.status(200).json(product);
+        res.status(200).json({ status: "success", message: "Detalle del producto por su ID.", product: product });
     } catch (error) {
         console.log("Error: ", error);
         res.status(500).json({ error: "Error interno del servidor" });
@@ -48,8 +48,8 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
     const { title, description, code, price, status, stock, category, thumbnails } = req.body;
     try {
-        const response = await products.saveProduct({title, description, code, price, status, stock, category, thumbnails});
-        res.status(200).send({ status: "success", message: "El producto fue agregado correctamente." });        
+        const product = await products.saveProduct({title, description, code, price, status, stock, category, thumbnails});
+        res.status(200).send({ status: "success", message: "El producto fue agregado correctamente.", product: product });       
     } catch (error) {
         console.log('Error al crear el producto', error);
     }
@@ -57,16 +57,16 @@ router.post("/", async (req, res) => {
 
 // RUTA PARA ACTUALIZAR UN PRODUCTO POR SU ID
 router.put("/:id", async (req, res) => {
-    const { id } = req.params;    
+    const pid = req.params.id;    
     const { title, description, code, price, status, stock, category, thumbnails } = req.body;
     try {        
-        const existingProduct = await products.getProductById(id);
+        const existingProduct = await products.getProductById(pid);
         if (!existingProduct) {
             return res.status(404).send({ status: "error", message: "El producto no fue encontrado." });
         }        
         const updatedProduct = { title, description, code, price, status, stock, category, thumbnails };
-        const response = await products.updateProductById(id, updatedProduct);
-        res.status(200).send({ status: "success", message: "El producto fue actualizado correctamente." });        
+        const product = await products.updateProductById(pid, updatedProduct);
+        res.status(200).send({ status: "success", message: "El producto fue actualizado correctamente.", product: product });  
     } catch (error) {
         console.log("Error actualizando el producto", error);
         res.status(500).json({ message: "Error al actualizar el producto." });
@@ -75,14 +75,14 @@ router.put("/:id", async (req, res) => {
 
 // RUTA PARA ELIMINAR UN PRODUCTO POR SU ID
 router.delete("/:id", async (req, res) => {
-    const { id } = req.params;
+    const pid = req.params.id;
     try {
-        const product = await products.getProductById(id);
+        const product = await products.getProductById(pid);
         if (!product) {
             return res.status(404).send({ status: "error", message: "El producto no fue encontrado." });
         }
-        const response = await products.deleteProductById(id);   
-        res.status(200).send({ status: "success", message: "El producto fue eliminado correctamente." });
+        const response = await products.deleteProductById(pid);   
+        res.status(200).send({ status: "success", message: "El producto fue eliminado correctamente.", product: response });          
     } catch (error) {
         console.log("Error eliminando el producto", error);
         res.status(500).send({ status: "error", message: "Error eliminando el producto." });

@@ -1,5 +1,8 @@
 <div class="container">
-    <h1>Productos</h1>
+    <h1>Productos Paginados con Filtro de tipo (page,limit,category,sort)</h1>
+    <h2>consulta de ejemplo:</h2>
+    <h3>http://localhost:8080/?page=2&limit=3&sort=desc&category=cat2</h3>
+    <hr>
     {{#if isValid}}
     <div>
         {{#each docs}}
@@ -11,9 +14,7 @@
                 Stock: {{this.stock}}<br>
                 Categoría: {{this.category}}<br>
                 Imágenes: {{this.thumbnails}}<br>
-                Estado: {{this.status}} </div>
-                <br>                
-                <div><button class="btn btn-danger" onclick="AgregarProductoACarro('{{this.id}}')">Agregar al Carro</button>               
+                Estado: {{this.status}} </div>                  
             </div>
         <hr>
         {{/each}}
@@ -42,9 +43,10 @@
     {{/if}}
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/index.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
 
 
 
